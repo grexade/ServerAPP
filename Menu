@@ -1,0 +1,15 @@
+#include <iostream>
+
+using namespace std;
+int main(){
+
+cout<<'Hello' +"user" ;
+cout<<Please choose your option:
+1) Read/Delete Messages
+2) Write Message to User
+3) Change config parameters
+4) Quit
+Option->
+
+return 0;
+}

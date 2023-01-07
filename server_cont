@@ -1,0 +1,65 @@
+int port = atoi(argv[1]); // Convert port number to integer
+
+// Create socket
+int sock = socket(AF_INET, SOCK_STREAM, 0);
+if (sock == -1)
+{
+    std::cout << "ERROR: Failed to create socket" << std::endl;
+    return 1;
+}
+
+// Bind socket to port
+sockaddr_in server;
+server.sin_family = AF_INET;
+server.sin_addr.s_addr = INADDR_ANY;
+server.sin_port = htons(port);
+
+if (bind(sock, (sockaddr*)&server, sizeof(server)) < 0)
+{
+    std::cout << "ERROR: Failed to bind socket to port " << port << std::endl;
+    return 1;
+}
+
+// Listen for incoming connections
+listen(sock, 3);
+
+// Accept incoming connection
+sockaddr_in client;
+socklen_t clientSize = sizeof(client);
+int clientSocket = accept(sock, (sockaddr*)&client, &clientSize);
+
+if (clientSocket < 0)
+{
+    std::cout << "ERROR: Failed to accept incoming connection" << std::endl;
+    return 1;
+}
+
+// Receive data from client
+char buffer[1024];
+memset(buffer, 0, 1024);
+int received = recv(clientSocket, buffer, 1024, 0);
+
+if (received < 0)
+{
+    std::cout << "ERROR: Failed to receive data from client" << std::endl;
+    return 1;
+}
+
+// Print received data
+std::cout << "Received data: " << buffer << std::endl;
+
+// Send data to client
+char message[] = "Hello from server!";
+int sent = send(clientSocket, message, strlen(message), 0);
+
+if (sent < 0)
+{
+    std::cout << "ERROR: Failed to send data to client" << std::endl;
+    return 1;
+}
+
+// Close sockets
+close(clientSocket);
+close(sock);
+
+return 0;
